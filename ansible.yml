@@ -1,0 +1,29 @@
+---
+- hosts: webserver
+  tasks:
+      - name: Install EPEL release for nginx
+        yum: 
+          name: epel-release 
+          state: present
+
+      - name: Install nginx web server
+        yum:
+          name: http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+          state: present
+
+      - name: Upload the default hello-world.html file
+        copy: 
+          src: html_files/hello-world.html 
+          dest: /usr/share/nginx/html 
+          mode: 0644
+      
+      - name:
+        lineinfile:
+          path: /etc/nginx/config.d/default.conf
+          regexp: '^index'
+          line: 'index  hello-world.html'
+          
+      - name: Starting nginx service
+        service:
+          name: nginx
+          state: started
